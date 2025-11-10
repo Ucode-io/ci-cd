@@ -1,0 +1,19 @@
+name: CI + CD
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+
+jobs:
+  build:
+    uses: ucode/ops-ci-cd/.github/workflows/stages/build.yml@master
+    with:
+      node-version: ${{ inputs.node-version }}
+
+  deploy:
+    needs: [build]
+    uses: ucode/ops-ci-cd/.github/workflows/stages/deploy.yml@master
+    with:
+      environment: ${{ inputs.environment }}

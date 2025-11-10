@@ -1,0 +1,15 @@
+name: Build
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        type: string
+        default: "20"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Building the app
+      - run: echo "Building the app"
