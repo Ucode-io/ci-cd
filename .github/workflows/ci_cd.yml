@@ -8,12 +8,12 @@ on:
 
 jobs:
   build:
-    uses: ./.github/workflows/build.yml@main
+    uses: ./.github/workflows/build.yml
     with:
       node-version: ${{ inputs.node-version }}
 
   deploy:
     needs: [build]
-    uses: ./.github/workflows/deploy.yml@main
+    uses: ./.github/workflows/deploy.yml
     with:
       environment: ${{ inputs.environment }}
