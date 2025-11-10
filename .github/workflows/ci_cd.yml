@@ -8,12 +8,12 @@ on:
 
 jobs:
   build:
-    uses: ucode/ci-cd/.github/workflows/components/build.yml@main
+    uses: ucode/ci-cd/.github/workflows/build.yml@main
     with:
       node-version: ${{ inputs.node-version }}
 
   deploy:
     needs: [build]
-    uses: ucode/ci-cd/.github/workflows/components/deploy.yml@main
+    uses: ucode/ci-cd/.github/workflows/deploy.yml@main
     with:
       environment: ${{ inputs.environment }}
