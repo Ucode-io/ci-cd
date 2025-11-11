@@ -1,4 +1,4 @@
-name: CI + CD
+name: CI/CD
 on:
   workflow_call:
     inputs:
@@ -11,8 +11,17 @@ on:
       ENV_TAG:
         type: string
         required: true
+      CLUSTER:
+        type: string
+        required: false
+      K8S_NAMESPACE:
+        type: string
+        required: false
 
 jobs:
+  env:
+    CLUSTER: ${{ inputs.ENVIRONMENT == 'production' && 'cluster-prod' || 'cluster-dev' }}
+    K8S_NAMESPACE: ${{ inputs.ENVIRONMENT == 'production' && 'ucode-prod' || 'ucode-test' }}
   build:
     uses: ./.github/workflows/build.yml
     with:
@@ -25,4 +34,6 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       ENVIRONMENT: ${{ inputs.ENVIRONMENT }}
+      CLUSTER: ${{ env.CLUSTER }}
+      K8S_NAMESPACE: ${{ env.K8S_NAMESPACE }}
     secrets: inherit
