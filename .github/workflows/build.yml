@@ -1,15 +1,69 @@
-name: Build
+name: Build Docker Image
 on:
   workflow_call:
     inputs:
-      node-version:
+      DOCKERFILE:
         type: string
-        default: "20"
+        default: Dockerfile
+      ENV_TAG:
+        type: string
+        default: latest
+      ORGANIZATION_NAME:
+        type: string
+        default: Ucode-io
+      TAG:
+        type: string
+        default: ${{ github.run_number }}
+        # required: true
+    secrets:
+      REGISTRY:
+        required: false
+      REGISTRY_USER:
+        required: false
+      REGISTRY_PASSWORD:
+        required: false
+
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    env:
+      REGISTRY_USER: ${{ secrets.REGISTRY_USER || github.actor }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD || secrets.GITHUB_TOKEN }}
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Building the app
-        run: echo "Building the app"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker registry
+        run: echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login "${{ inputs.REGISTRY }}" \
+          --username "${{ secrets.REGISTRY_USER }}" --password-stdin
+
+      - name: Build Docker image
+        run: |
+          make build-image \
+            DOCKERFILE=${{ inputs.DOCKERFILE }} \
+            TAG=${{ inputs.TAG }} \
+            PROJECT_NAME=${{ inputs.ORGANIZATION_NAME }} \
+            REGISTRY=${{ inputs.REGISTRY }} \
+            ENV_TAG=${{ inputs.ENV_TAG }}
+
+      - name: Push Docker image
+        run: |
+          make push-image \
+            TAG=${{ inputs.TAG }} \
+            PROJECT_NAME=${{ inputs.ORGANIZATION_NAME }} \
+            REGISTRY=${{ inputs.REGISTRY }} \
+            ENV_TAG=${{ inputs.ENV_TAG }}
+
+      - name: Clear local images
+        run: |
+          make clear-image \
+            TAG=${{ inputs.TAG }} \
+            PROJECT_NAME=${{ inputs.ORGANIZATION_NAME }} \
+            REGISTRY=${{ inputs.REGISTRY }} \
+            ENV_TAG=${{ inputs.ENV_TAG }}
