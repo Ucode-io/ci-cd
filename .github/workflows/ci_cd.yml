@@ -18,7 +18,8 @@ jobs:
     with:
       DOCKERFILE: ${{ inputs.DOCKERFILE }}
       ENV_TAG: ${{ inputs.ENV_TAG }}
-    secrets: inherit
+    secrets:
+      REGISTRY: ${{ secrets.REGISTRY }}
 
   deploy:
     needs: [build]
