@@ -40,6 +40,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Try to download .env artifact
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: env-file
+          path: .
+
+      - name: Check if .env file exists
+        run: |
+          if [ -f .env ]; then
+            echo ".env file found, including it in build context."
+          else
+            echo "No .env file found, skipping."
+          fi
+
       - name: Log in to Docker registry
         run: |
           echo "${{ env.REGISTRY_PASSWORD }}" | docker login "${{ env.REGISTRY }}" --username "${{ env.REGISTRY_USER }}" --password-stdin
@@ -68,3 +83,9 @@ jobs:
             PROJECT_NAME=${{ inputs.ORGANIZATION_NAME }} \
             REGISTRY=${{ secrets.REGISTRY }} \
             ENV_TAG=${{ inputs.ENV_TAG }}
+
+      - name: Clear .env artifact
+        uses: geekyeggo/delete-artifact@v5
+        continue-on-error: true
+        with:
+            name: env-file

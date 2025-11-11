@@ -1,0 +1,39 @@
+name: Frontend CI/CD
+on:
+  workflow_call:
+    inputs:
+      ENVIRONMENT:
+        required: true
+        type: string
+      DOCKERFILE:
+        type: string
+        default: Dockerfile
+      ENV_TAG:
+        type: string
+        required: true
+      CLUSTER:
+        type: string
+        required: false
+      K8S_NAMESPACE:
+        type: string
+        required: false
+
+jobs:
+  inject-secrets:
+    uses: ./.github/workflows/get_vault_secrets.yml
+    secrets: inherit
+
+  build:
+    uses: ./.github/workflows/build.yml
+    with:
+      DOCKERFILE: ${{ inputs.DOCKERFILE }}
+      ENV_TAG: ${{ inputs.ENV_TAG }}
+    secrets: inherit
+
+  deploy:
+    needs: [build]
+    uses: ./.github/workflows/deploy.yml
+    with:
+      CLUSTER: ${{ inputs.ENVIRONMENT == 'production' && 'cluster-prod' || 'cluster-dev' }}
+      K8S_NAMESPACE: ${{ inputs.ENVIRONMENT == 'production' && 'ucode-prod' || 'ucode-test' }}
+    secrets: inherit
