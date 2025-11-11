@@ -18,13 +18,11 @@ jobs:
     with:
       DOCKERFILE: ${{ inputs.DOCKERFILE }}
       ENV_TAG: ${{ inputs.ENV_TAG }}
-    secrets:
-      inherit: true
+    secrets: inherit
 
   deploy:
     needs: [build]
     uses: ./.github/workflows/deploy.yml
     with:
       ENVIRONMENT: ${{ inputs.ENVIRONMENT }}
-    secrets:
-      inherit: true
+    secrets: inherit
