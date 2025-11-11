@@ -2,18 +2,25 @@ name: CI + CD
 on:
   workflow_call:
     inputs:
-      environment:
+      ENVIRONMENT:
         required: true
         type: string
+      DOCKERFILE:
+        type: string
+        default: Dockerfile
+      ENV_TAG:
+        type: string
+        required: true
 
 jobs:
   build:
     uses: ./.github/workflows/build.yml
     with:
-      node-version: ${{ inputs.node-version }}
+      DOCKERFILE: ${{ inputs.DOCKERFILE }}
+      ENV_TAG: ${{ inputs.ENV_TAG }}
 
   deploy:
     needs: [build]
     uses: ./.github/workflows/deploy.yml
     with:
-      environment: ${{ inputs.environment }}
+      ENVIRONMENT: ${{ inputs.ENVIRONMENT }}
