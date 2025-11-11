@@ -21,7 +21,11 @@ on:
 jobs:
   inject-secrets:
     uses: ./.github/workflows/get_vault_secrets.yml
-    secrets: inherit
+    secrets:
+      SECRET_PATHS: ${{ inputs.ENVIRONMENT == 'production' && secrets.PROD_SECRET_PATHS || secrets.STAGING_SECRET_PATHS  }}
+      VAULT_AUTH_PATH: ${{ secrets.VAULT_AUTH_PATH }}
+      VAULT_AUTH_ROLE: ${{ secrets.VAULT_AUTH_ROLE }}
+      VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
 
   build:
     uses: ./.github/workflows/build.yml
