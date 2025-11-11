@@ -26,6 +26,7 @@ jobs:
     secrets: inherit
 
   build:
+    needs: [inject-secrets]
     uses: ./.github/workflows/build.yml
     with:
       DOCKERFILE: ${{ inputs.DOCKERFILE }}
