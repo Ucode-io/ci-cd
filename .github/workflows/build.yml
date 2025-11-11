@@ -10,7 +10,7 @@ on:
         default: latest
       ORGANIZATION_NAME:
         type: string
-        default: Ucode-io
+        default: ucode-io
       TAG:
         type: string
         default: ${{ github.run_number }}
