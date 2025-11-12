@@ -2,12 +2,10 @@ name: Deploy
 
 on:
   workflow_call:
-    inputs:
+    secrets:
       CLUSTER:
-        type: string
         required: true
       K8S_NAMESPACE:
-        type: string
         required: true
 
 jobs:
@@ -20,8 +18,8 @@ jobs:
     env:
       PIPELINE_ID: ${{ github.run_number }}
       PROJECT_NAME: ${{ github.event.repository.name }}
-      CLUSTER: ${{ inputs.CLUSTER }}
-      K8S_NAMESPACE: ${{ inputs.K8S_NAMESPACE }}
+      CLUSTER: ${{ secrets.CLUSTER }}
+      K8S_NAMESPACE: ${{ secrets.K8S_NAMESPACE }}
 
     steps:
       - name: Checkout deployments repo

@@ -11,12 +11,6 @@ on:
       ENV_TAG:
         type: string
         required: true
-      CLUSTER:
-        type: string
-        required: false
-      K8S_NAMESPACE:
-        type: string
-        required: false
 
 jobs:
   build:
@@ -29,7 +23,6 @@ jobs:
   deploy:
     needs: [build]
     uses: ./.github/workflows/deploy.yml
-    with:
+    secrets:
       CLUSTER: ${{ inputs.ENVIRONMENT == 'production' && 'cluster-prod' || 'cluster-dev' }}
       K8S_NAMESPACE: ${{ inputs.ENVIRONMENT == 'production' && 'ucode-prod' || 'ucode-test' }}
-    secrets: inherit
