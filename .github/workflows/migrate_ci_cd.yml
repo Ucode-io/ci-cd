@@ -1,0 +1,38 @@
+name: CI/CD
+on:
+  workflow_call:
+    inputs:
+      ENVIRONMENT:
+        required: true
+        type: string
+      DOCKERFILE:
+        type: string
+        default: Dockerfile
+      ENV_TAG:
+        type: string
+        required: true
+    secrets:
+      POSTGRES_LINK:
+        required: true
+      PATH_MIGRATION:
+        required: true
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    with:
+      DOCKERFILE: ${{ inputs.DOCKERFILE }}
+      ENV_TAG: ${{ inputs.ENV_TAG }}
+    secrets: inherit
+
+  migrate:
+    needs: [build]
+    uses: ./.github/workflows/migrate.yml
+    secrets: inherit
+
+  deploy:
+    needs: [deploy]
+    uses: ./.github/workflows/deploy.yml
+    secrets:
+      CLUSTER: ${{ inputs.ENVIRONMENT == 'production' && 'cluster-prod' || 'cluster-dev' }}
+      K8S_NAMESPACE: ${{ inputs.ENVIRONMENT == 'production' && 'ucode-prod' || 'ucode-test' }}
