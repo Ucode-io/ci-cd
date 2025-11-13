@@ -11,9 +11,6 @@ on:
       ENV_TAG:
         type: string
         required: true
-      NEEDS_MIGRATION:
-        type: boolean
-        default: false
     secrets:
       PROD_POSTGRES_LINK:
         required: false
@@ -33,7 +30,6 @@ jobs:
     secrets: inherit
 
   migrate:
-    if: ${{ inputs.NEEDS_MIGRATION == true }}
     needs: [build]
     uses: ./.github/workflows/migrate.yml
     secrets:
