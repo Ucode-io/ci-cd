@@ -12,10 +12,14 @@ on:
         type: string
         required: true
     secrets:
-      POSTGRES_LINK:
-        required: true
-      PATH_MIGRATION:
-        required: true
+      PROD_POSTGRES_LINK:
+        required: false
+      PROD_PATH_MIGRATION:
+        required: false
+      STAGING_POSTGRES_LINK:
+        required: false
+      STAGING_PATH_MIGRATION:
+        required: false
 
 jobs:
   build:
@@ -28,7 +32,9 @@ jobs:
   migrate:
     needs: [build]
     uses: ./.github/workflows/migrate.yml
-    secrets: inherit
+    secrets:
+      POSTGRES_LINK: ${{ inputs.ENVIRONMENT == 'production' && secrets.PROD_POSTGRES_LINK || secrets.STAGING_POSTGRES_LINK }}
+      PATH_MIGRATION: ${{ inputs.ENVIRONMENT == 'production' && secrets.PROD_PATH_MIGRATION || secrets.STAGING_PATH_MIGRATION }}
 
   deploy:
     needs: [deploy]
