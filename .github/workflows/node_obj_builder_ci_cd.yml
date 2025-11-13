@@ -11,13 +11,13 @@ on:
       ENV_TAG:
         type: string
         required: true
-      OBJECT_BUILDER_TYPE:
+      NODE_OBJECT_BUILDER_TYPE:
         type: string
         required: true
     secrets:
-      UCODE_OBJECT_BUILDER_HIGH_PATH:
+      NODE_OBJECT_BUILDER_HIGH_PATH:
         required: true
-      UCODE_OBJECT_BUILDER_LOW_PATH:
+      NODE_OBJECT_BUILDER_LOW_PATH:
         required: true
 
 jobs:
@@ -30,8 +30,8 @@ jobs:
 
   deploy:
     needs: [build]
-    uses: ./.github/workflows/deploy_obj_builder.yml
+    uses: ./.github/workflows/deploy_node_obj_builder.yml
     secrets:
       CLUSTER: ${{ inputs.ENVIRONMENT == 'production' && 'cluster-prod' || 'cluster-dev' }}
       K8S_NAMESPACE: ${{ inputs.ENVIRONMENT == 'production' && 'ucode-prod' || 'ucode-test' }}
-      DEPLOYMENT_PATH: ${{ inputs.OBJECT_BUILDER_TYPE == 'high' && secrets.UCODE_OBJECT_BUILDER_HIGH_PATH || secrets.UCODE_OBJECT_BUILDER_LOW_PATH }}
+      DEPLOYMENT_PATH: ${{ inputs.OBJECT_BUILDER_TYPE == 'high' && secrets.NODE_OBJECT_BUILDER_HIGH_PATH || secrets.NODE_OBJECT_BUILDER_LOW_PATH }}
