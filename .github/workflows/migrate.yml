@@ -9,34 +9,34 @@ on:
         required: true
 
 jobs:
-  name: Run Database Migrations
-  runs-on: ubuntu-latest
+  migrate:
+    runs-on: ubuntu-latest
 
-  env:
-    PATH_MIGRATION: ${{ secrets.PATH_MIGRATION }}
-    POSTGRES_LINK: ${{ secrets.POSTGRES_LINK }}
+    env:
+      PATH_MIGRATION: ${{ secrets.PATH_MIGRATION }}
+      POSTGRES_LINK: ${{ secrets.POSTGRES_LINK }}
 
-  steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Install migrate CLI
-      run: |
-        wget https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz
-        tar -xvf migrate.linux-amd64.tar.gz
-        mv migrate.linux-amd64 migrate
-        chmod +x migrate
-        sudo mv migrate /usr/local/bin/
-        rm -rf migrate.linux-amd64.tar.gz
+      - name: Install migrate CLI
+        run: |
+          wget https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz
+          tar -xvf migrate.linux-amd64.tar.gz
+          mv migrate.linux-amd64 migrate
+          chmod +x migrate
+          sudo mv migrate /usr/local/bin/
+          rm -rf migrate.linux-amd64.tar.gz
 
-    - name: Run migrations
-      shell: bash
-      run: |
-        echo "::add-mask::$POSTGRES_LINK"
+      - name: Run migrations
+        shell: bash
+        run: |
+          echo "::add-mask::$POSTGRES_LINK"
 
-        echo "Running database migrations..."
-        migrate -path="$PWD/$PATH_MIGRATION" \
-                -database="${POSTGRES_LINK}" \
-                up
+          echo "Running database migrations..."
+          migrate -path="$PWD/$PATH_MIGRATION" \
+                  -database="${POSTGRES_LINK}" \
+                  up
 
-        echo "✅ Migrations applied successfully!"
+          echo "✅ Migrations applied successfully!"
