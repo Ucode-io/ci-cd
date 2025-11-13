@@ -11,6 +11,9 @@ on:
       ENV_TAG:
         type: string
         required: true
+      NEEDS_MIGRATION:
+        type: boolean
+        default: false
     secrets:
       PROD_POSTGRES_LINK:
         required: false
@@ -30,6 +33,7 @@ jobs:
     secrets: inherit
 
   migrate:
+    if: ${{ inputs.NEEDS_MIGRATION == true }}
     needs: [build]
     uses: ./.github/workflows/migrate.yml
     secrets:
@@ -37,7 +41,7 @@ jobs:
       PATH_MIGRATION: ${{ inputs.ENVIRONMENT == 'production' && secrets.PROD_PATH_MIGRATION || secrets.STAGING_PATH_MIGRATION }}
 
   deploy:
-    needs: [deploy]
+    needs: [migrate]
     uses: ./.github/workflows/deploy.yml
     secrets:
       CLUSTER: ${{ inputs.ENVIRONMENT == 'production' && 'cluster-prod' || 'cluster-dev' }}

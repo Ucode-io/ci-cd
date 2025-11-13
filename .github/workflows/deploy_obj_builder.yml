@@ -1,0 +1,49 @@
+name: Deploy
+
+on:
+  workflow_call:
+    secrets:
+      CLUSTER:
+        required: true
+      K8S_NAMESPACE:
+        required: true
+      DEPLOYMENT_PATH:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    env:
+      PIPELINE_ID: ${{ github.run_number }}
+      DEPLOYMENT_PATH: ${{ secrets.DEPLOYMENT_PATH }}
+      CLUSTER: ${{ secrets.CLUSTER }}
+      K8S_NAMESPACE: ${{ secrets.K8S_NAMESPACE }}
+
+    steps:
+      - name: Checkout deployments repo
+        uses: actions/checkout@v4
+        with:
+          repository: Ucode-io/deployments
+          token: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
+          path: deployments
+          fetch-depth: 0
+
+      - name: Install yq
+        uses: mikefarah/yq@v4
+
+      - name: Update image tag
+        run: |
+          yq eval --inplace ".image.tag = strenv(PIPELINE_ID)" "deployments/clusters/${CLUSTER}/${K8S_NAMESPACE}/${DEPLOYMENT_PATH}/values.yaml"
+
+      - name: Commit and push
+        run: |
+          cd deployments
+          git config user.email "argocd@u-code.io"
+          git config user.name "argocd"
+          git add .
+          git commit -m "[CLUSTER:${CLUSTER},NAMESPACE:${K8S_NAMESPACE}] Update image tag for ${DEPLOYMENT_PATH}" || echo "No changes to commit"
+          git push origin main
