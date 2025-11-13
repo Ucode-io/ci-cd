@@ -11,6 +11,9 @@ on:
       ENV_TAG:
         type: string
         required: true
+    secrets:
+      GH_TOKEN:
+        required: true
 
 jobs:
   inject-secrets:
@@ -33,3 +36,4 @@ jobs:
     secrets:
       CLUSTER: ${{ inputs.ENVIRONMENT == 'production' && 'cluster-prod' || 'cluster-dev' }}
       K8S_NAMESPACE: ${{ inputs.ENVIRONMENT == 'production' && 'ucode-prod' || 'ucode-test' }}
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}

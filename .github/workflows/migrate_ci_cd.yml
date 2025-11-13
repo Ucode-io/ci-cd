@@ -20,6 +20,8 @@ on:
         required: false
       STAGING_PATH_MIGRATION:
         required: false
+      GH_TOKEN:
+        required: true
 
 jobs:
   build:
@@ -42,3 +44,4 @@ jobs:
     secrets:
       CLUSTER: ${{ inputs.ENVIRONMENT == 'production' && 'cluster-prod' || 'cluster-dev' }}
       K8S_NAMESPACE: ${{ inputs.ENVIRONMENT == 'production' && 'ucode-prod' || 'ucode-test' }}
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
