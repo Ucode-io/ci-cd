@@ -8,7 +8,7 @@ on:
       PATH_MIGRATION:
         required: true
 
-migrate:
+jobs:
   name: Run Database Migrations
   runs-on: ubuntu-latest
 
