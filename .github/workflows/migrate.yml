@@ -36,7 +36,7 @@ jobs:
 
           echo "Running database migrations..."
           migrate -path="$PWD/$PATH_MIGRATION" \
-                  -database="${POSTGRES_LINK}" \
+                  -database="${POSTGRES_LINK}?sslmode=disable&x-migrations-table=migrations_${{ github.event.repository.name }}" \
                   up
 
           echo "✅ Migrations applied successfully!"
