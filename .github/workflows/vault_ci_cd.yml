@@ -1,4 +1,4 @@
-name: Frontend CI/CD
+name: CI/CD with Vault
 on:
   workflow_call:
     inputs:
