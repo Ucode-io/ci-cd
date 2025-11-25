@@ -18,6 +18,8 @@ on:
 jobs:
   vault:
     uses: Ucode-io/ci-cd/.github/workflows/get_vault_secrets.yml@main
+    with:
+      ENVIRONMENT: ${{ inputs.ENVIRONMENT }}
     secrets: inherit
 
   build:
