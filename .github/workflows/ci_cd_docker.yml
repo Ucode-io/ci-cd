@@ -44,7 +44,7 @@ jobs:
 
       - name: Set environment variables
         run: |
-            echo "NEW_IMAGE=${{ secrets.REGISTRY }}/$OWNER/${{ github.event.repository.name }}:${{ github.run_id }}" >> $GITHUB_ENV
+            echo "NEW_IMAGE=${{ secrets.REGISTRY }}/$OWNER/${{ github.event.repository.name }}:${{ github.run_number }}" >> $GITHUB_ENV
             echo "OLD_PATTERN=${{ secrets.REGISTRY }}/$OWNER/${{ github.event.repository.name }}:[a-zA-Z0-9_\\.\\-]*" >> $GITHUB_ENV
             echo "SERVICE_FILE=${{ secrets.SERVICE_FILE }}" >> $GITHUB_ENV
             echo "SERVICE_NAME=${{ secrets.SERVICE_NAME }}" >> $GITHUB_ENV
